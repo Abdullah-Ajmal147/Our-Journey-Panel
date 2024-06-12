@@ -37,6 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
+
+    'rest_framework',
+    'rest_framework.authtoken',
+    'authentication',
 ]
 
 MIDDLEWARE = [
@@ -50,6 +55,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'core.urls'
+AUTH_USER_MODEL = 'authentication.CustomUser'
+CORS_ORIGIN_ALLOW_ALL = True
 
 TEMPLATES = [
     {
