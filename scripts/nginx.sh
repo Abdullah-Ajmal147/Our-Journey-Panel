@@ -1,10 +1,10 @@
 #!/usr/bin/bash
 
 # Replace {YOUR_PROJECT_MAIN_DIR_NAME} with your actual project directory name
-PROJECT_MAIN_DIR_NAME="Imagine-Backend"
+PROJECT_MAIN_DIR_NAME="Our-Journey-Panel"
 
 # Replace {FOLDER_NAME_WHERE_SETTINGS_FILE_EXISTS} with the folder name where your nginx configuration file exists
-FOLDER_NAME_WHERE_SETTINGS_FILE_EXISTS="Imaginebackend"
+FOLDER_NAME_WHERE_SETTINGS_FILE_EXISTS="Journeybackend"
 
 # Reload systemd daemon
 sudo systemctl daemon-reload

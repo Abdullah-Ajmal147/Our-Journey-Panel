@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-PROJECT_MAIN_DIR_NAME="Imagine-Backend"
+PROJECT_MAIN_DIR_NAME="Our-Journey-Panel"
 
 # Validate variables
 if [ -z "$PROJECT_MAIN_DIR_NAME" ]; then

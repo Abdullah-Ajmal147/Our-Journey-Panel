@@ -8,7 +8,7 @@ GIT_REPO_URL="https://github.com/Abdullah-Ajmal147/Imagine-Backend.git"
 #GIT_REPO_URL="https://<your_username>:<your_PAT>@github.com/codewithmuh/django-aws-ec2-autoscaling.git"
 
 # Replace {YOUR_PROJECT_MAIN_DIR_NAME} with your actual project directory name
-PROJECT_MAIN_DIR_NAME="Imagine-Backend"
+PROJECT_MAIN_DIR_NAME="Our-Journey-Panel"
 
 # Clone repository
 git clone "$GIT_REPO_URL" "/home/ubuntu/backend/$PROJECT_MAIN_DIR_NAME"

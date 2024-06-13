@@ -1,8 +1,10 @@
 from django.urls import path
-from authentication.views.v1.views import UserRegistrationAPIView
+from authentication.views.v1.views import UserRegistrationAPIView, ChatCompletionView
 
 urlpatterns = [
     path('api/register/', UserRegistrationAPIView.as_view(), name='user-register'),
+    path('api/test/', ChatCompletionView.as_view(), name='user-register'),
+
 
 
     # path('api/login/', UserLoginAPIView.as_view(), name='api-login'),

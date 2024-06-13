@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-PROJECT_MAIN_DIR_NAME="Imagine-Backend" 
+PROJECT_MAIN_DIR_NAME="Our-Journey-Panel" 
 
 # Validate variables
 if [ -z "$PROJECT_MAIN_DIR_NAME" ]; then
@@ -22,6 +22,6 @@ source "/home/ubuntu/backend/$PROJECT_MAIN_DIR_NAME/venv/bin/activate"
 
 # Install dependencies
 echo "Installing Python dependencies..."
-pip install -r "/home/ubuntu/backend/$PROJECT_MAIN_DIR_NAME/requirment.txt"
+pip install -r "/home/ubuntu/backend/$PROJECT_MAIN_DIR_NAME/requirements.txt"
 
 echo "Dependencies installed successfully."
