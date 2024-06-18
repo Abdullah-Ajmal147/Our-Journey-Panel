@@ -1,0 +1,6 @@
+[2024-06-18 11:28:29 +0000] [4027] [INFO] Starting gunicorn 22.0.0
+[2024-06-18 11:28:29 +0000] [4027] [INFO] Listening at: unix:/home/ubuntu/backend/Our-Journey-Panel/gunicorn.sock (4027)
+[2024-06-18 11:28:29 +0000] [4027] [INFO] Using worker: sync
+[2024-06-18 11:28:29 +0000] [4028] [INFO] Booting worker with pid: 4028
+[2024-06-18 11:28:29 +0000] [4029] [INFO] Booting worker with pid: 4029
+[2024-06-18 11:28:29 +0000] [4030] [INFO] Booting worker with pid: 4030
