@@ -23,3 +23,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('v1/auth/', include('authentication.urls.v1.urls')),
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
