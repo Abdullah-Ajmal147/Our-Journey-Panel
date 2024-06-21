@@ -9,8 +9,35 @@ class UserRegistrationAPIView(APIView):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # return Response(
+            #     serializer.data, 
+            #     status=status.HTTP_201_CREATED)
+        #return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {
+                    'status': True,
+                    'status_code': status.HTTP_201_CREATED,
+                    'response': {
+                        'message': 'User Created Successfully',
+                        'error_message': None,
+                        'data': serializer.data,
+                        # 'token': token.key
+                    }
+                },
+                status=status.HTTP_201_CREATED
+            )
+        else:
+            return Response(
+                {
+                    'status': False,
+                    'status_code': status.HTTP_400_BAD_REQUEST,
+                    'response': {
+                        'message': 'Unable to Create User',
+                        'error_message': str(serializer.errors)
+                    }
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
     
 
 class ChatCompletionView(APIView):

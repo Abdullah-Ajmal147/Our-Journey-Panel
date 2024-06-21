@@ -25,10 +25,24 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, phone, password=password, **extra_fields)
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
+    ROLE_CHOICES = (
+        ('admin', 'admin'),
+        ('captain', 'captain'),
+        ('customer', 'customer'),
+    )
+    RIDE_CHOICES = (
+        ('RideAc', 'RideAc'),
+        ('Echo', 'Echo'),
+    )
+
     username = models.CharField(max_length=150, unique=True)
     phone = models.CharField(max_length=20, unique=True)
+    country_code = models.CharField(max_length=20, blank=True)
     email = models.EmailField(max_length=255, unique=True)
     is_active = models.BooleanField(default=True)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES,blank=True)
+    ride_category = models.CharField(max_length=20, choices=RIDE_CHOICES,blank=True)
+
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
     is_sso = models.BooleanField(default=False)
