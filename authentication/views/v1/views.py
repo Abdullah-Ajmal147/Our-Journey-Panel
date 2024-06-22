@@ -3,6 +3,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from authentication.serializers import UserRegistrationSerializer
+from core.utils import ApiCustomResponse
+from authentication.models import CustomUser
+from rest_framework.authtoken.models import Token
+
 
 class UserRegistrationAPIView(APIView):
     def post(self, request):
@@ -38,6 +42,26 @@ class UserRegistrationAPIView(APIView):
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+
+class CheckUser(APIView, ApiCustomResponse):
+    def get(self, request):
+        phone_number = request.GET.get('phone_number', None)
+        user = CustomUser.objects.filter(phone=phone_number).first()
+        
+        if user:
+            token, created = Token.objects.get_or_create(user=user)
+            return self.get_response(
+                data=token.key,  # Assuming you want to return the token key
+                status_code=status.HTTP_200_OK,
+            )
+        else:
+            return self.get_response(
+                message='User does not exist with this phone number.',
+                status_code=status.HTTP_404_NOT_FOUND,
+            )
+
+
     
 
 class ChatCompletionView(APIView):
