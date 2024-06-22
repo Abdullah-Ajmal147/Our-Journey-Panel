@@ -46,13 +46,18 @@ class UserRegistrationAPIView(APIView):
 
 class CheckUser(APIView, ApiCustomResponse):
     def get(self, request):
-        phone_number = request.GET.get('phone_number', None)
-        user = CustomUser.objects.filter(phone=phone_number).first()
+        phone_number = request.data.get('phone_number', None)
+        # Normalize phone number
+        # phone_number = ''.join(filter(str.isdigit, phone_number))
+        
+        # Perform case-insensitive lookup
+        user = CustomUser.objects.filter(phone__iexact=phone_number).first()
         
         if user:
             token, created = Token.objects.get_or_create(user=user)
+            data = {"token": token.key}
             return self.get_response(
-                data=token.key,  # Assuming you want to return the token key
+                data=data,
                 status_code=status.HTTP_200_OK,
             )
         else:
