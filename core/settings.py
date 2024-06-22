@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'authentication',
     'web_socket',
+    'order'
 ]
 
 MIDDLEWARE = [
