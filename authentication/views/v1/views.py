@@ -1,3 +1,4 @@
+import json
 import requests
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -6,6 +7,7 @@ from authentication.serializers import UserRegistrationSerializer
 from core.utils import ApiCustomResponse
 from authentication.models import CustomUser
 from rest_framework.authtoken.models import Token
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 
 class UserRegistrationAPIView(APIView):
@@ -13,10 +15,7 @@ class UserRegistrationAPIView(APIView):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            # return Response(
-            #     serializer.data, 
-            #     status=status.HTTP_201_CREATED)
-        #return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
             return Response(
                 {
                     'status': True,
@@ -47,6 +46,11 @@ class UserRegistrationAPIView(APIView):
 class CheckUser(APIView, ApiCustomResponse):
     def get(self, request):
         phone_number = request.data.get('phone_number', None)
+        if phone_number is None:
+            return self.get_response(
+                message='Phone number is required.',
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
         # Normalize phone number
         # phone_number = ''.join(filter(str.isdigit, phone_number))
         
@@ -66,6 +70,17 @@ class CheckUser(APIView, ApiCustomResponse):
                 status_code=status.HTTP_404_NOT_FOUND,
             )
 
+
+class Profile(APIView, ApiCustomResponse):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # print("Request Headers:")
+        # print(json.dumps(dict(request.headers), indent=4))
+        print(request.user)
+        # user = CustomUser.objects.get(user=request.user)
+        serializer = UserRegistrationSerializer(request.user)
+        return self.get_response(data=serializer.data)
 
     
 

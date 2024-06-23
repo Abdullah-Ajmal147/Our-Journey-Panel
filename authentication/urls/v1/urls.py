@@ -2,12 +2,14 @@ from django.urls import path
 from authentication.views.v1.views import (
     UserRegistrationAPIView, 
     ChatCompletionView,
-    CheckUser
+    CheckUser, Profile
     )
 
 urlpatterns = [
     path('api/register/', UserRegistrationAPIView.as_view(), name='user-register'),
     path('api/checkuser/', CheckUser.as_view(), name='user-check'),
+    path('api/profile/', Profile.as_view(), name='user-profile'),
+
     path('api/test/', ChatCompletionView.as_view(), name='user-register'),
 
 
