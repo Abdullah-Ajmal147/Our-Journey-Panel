@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'authentication',
     'web_socket',
-    'order'
+    'order',
+    'payment'
 ]
 
 MIDDLEWARE = [
@@ -157,3 +158,7 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+# Stripe Keys
+STRIPE_SECRET_KEY = 'sk_test_51PD4CFKMnegld3GudWpfJF5QHCO25GgpAyf43wgt4nW8KBe7mTwaNHCFb2IeOxBsu6oPMyotIJdQHWHjhMFrqvkV00N6cPq7V3'
+STRIPE_PUBLISHABLE_KEY = 'pk_test_51PD4CFKMnegld3GupBxgQmRCHj51JKFVoTrfMmrnHzGTKqHQBXbceTpW0foqgHu9U1tAPr30vMPGkL00e0unFwbo00HscTlKWS'
