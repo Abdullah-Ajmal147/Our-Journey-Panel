@@ -38,9 +38,13 @@ class SendMessage(APIView):
         return Response({"message": "Message Sent Successfully"} , status=status.HTTP_200_OK)
     
 
-def order(request, room_name):
+def caption_dashboard(request):
+    return render(request, "chat/caption_dashboard.html")
+
+
+def user_dashboard(request, room_name):
     print(room_name)
-    return render(request, "chat/order.html", {"room_name": room_name})
+    return render(request, "chat/user_dashboard.html", {"room_name": room_name})
 
 
 class OrderRide(APIView):
@@ -51,6 +55,7 @@ class OrderRide(APIView):
             'car_type': request.data['car_type'],
             'price': request.data['price'],
             'order_id': request.data['order_id'],
+            'user_id': request.data['user_id'],
         }
 
         layer = get_channel_layer()

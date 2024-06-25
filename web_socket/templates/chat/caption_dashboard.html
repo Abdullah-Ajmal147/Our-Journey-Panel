@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Captain Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #orders-log {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        button {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Captain Dashboard</h1>
+    <div id="orders-log"></div>
+    <script>
+        const captainSocket = new WebSocket(
+            'ws://' + window.location.host + '/ws/captain/'
+        );
+
+        captainSocket.onmessage = function(e) {
+            console.log(e.data);
+            const data = JSON.parse(e.data);
+            const ordersLog = document.querySelector('#orders-log');
+            const orderElement = document.createElement('div');
+            orderElement.textContent = `Order from ${data.order_details.from_address} ${data.order_details.from_latitude}, ${data.order_details.from_longitude} to ${data.order_details.to_address} ${data.order_details.to_latitude}, ${data.order_details.to_longitude}, Car Type: ${data.order_details.car_type}, Price: ${data.order_details.price}, User ID: ${data.order_details.user_id}, Order ID: ${data.order_details.order_id}`;
+            const confirmButton = document.createElement('button');
+            confirmButton.textContent = 'Confirm Order';
+            confirmButton.onclick = function() {
+                captainSocket.send(JSON.stringify({
+                    command: 'confirm_order',
+                    order_id: data.order_details.order_id,
+                    user_id: data.order_details.user_id
+                }));
+            };
+            orderElement.appendChild(confirmButton);
+            ordersLog.appendChild(orderElement);
+            ordersLog.scrollTop = ordersLog.scrollHeight;
+        };
+
+        captainSocket.onclose = function(e) {
+            console.error('Captain socket closed unexpectedly');
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #notification-log {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 5px;
+            margin-top: 10px;
+            background-color: #f8f8f8;
+        }
+    </style>
+</head>
+<body>
+    <h1>User Dashboard</h1>
+    <div>Your orders and updates will appear below:</div>
+    <div id="notification-log"></div>
+    <script>
+        // Replace 'YOUR_USER_ID' with the actual user's ID dynamically passed from the server or authentication mechanism
+        const userId = '1';
+
+        const userSocket = new WebSocket(
+            'ws://' + window.location.host + '/ws/user/' + userId + '/'
+        );
+
+        userSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            console.log(data.order_details);
+            const log = document.getElementById('notification-log');
+            const messageElement = document.createElement('div');
+            messageElement.textContent = `Order Details (Order ID: ${data.order_details.order_id}) (User ID: ${data.order_details.user_id}) (Message: ${data.order_details.message})`;
+            log.appendChild(messageElement);
+            log.scrollTop = log.scrollHeight; // Keep the scrollbar at the bottom
+        };
+
+        userSocket.onclose = function(e) {
+            console.error('User socket closed unexpectedly');
+            const log = document.getElementById('notification-log');
+            const errorElement = document.createElement('div');
+            errorElement.textContent = 'Connection lost with the server. Please refresh the page to reconnect.';
+            errorElement.style.color = 'red';
+            log.appendChild(errorElement);
+        };
+    </script>
+</body>
+</html>
