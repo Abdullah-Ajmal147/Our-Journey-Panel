@@ -77,12 +77,17 @@ class Profile(APIView, ApiCustomResponse):
     def get(self, request):
         # print("Request Headers:")
         # print(json.dumps(dict(request.headers), indent=4))
-        print(request.user)
         # user = CustomUser.objects.get(user=request.user)
         serializer = UserRegistrationSerializer(request.user)
         return self.get_response(data=serializer.data)
-
     
+    def put(self, request):
+        serializer = UserRegistrationSerializer(request.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return self.get_response(data=serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)   
+
 
 class ChatCompletionView(APIView):
     def post(self, request):
