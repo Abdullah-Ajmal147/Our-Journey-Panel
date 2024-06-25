@@ -11,6 +11,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 
 
 class UserRegistrationAPIView(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
@@ -47,6 +49,8 @@ class UserRegistrationAPIView(APIView):
 
 
 class CheckUser(APIView, ApiCustomResponse):
+    permission_classes = [AllowAny]
+
     def post(self, request):
         phone_number = request.data.get('phone_number', None)
         if phone_number is None:
