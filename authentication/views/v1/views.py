@@ -14,7 +14,10 @@ class UserRegistrationAPIView(APIView):
     def post(self, request):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            user = serializer.save()
+            
+            # Generate token for the user
+            token, created = Token.objects.get_or_create(user=user)
 
             return Response(
                 {
@@ -24,7 +27,7 @@ class UserRegistrationAPIView(APIView):
                         'message': 'User Created Successfully',
                         'error_message': None,
                         'data': serializer.data,
-                        # 'token': token.key
+                        'token': token.key  # Include token key in the response
                     }
                 },
                 status=status.HTTP_201_CREATED
