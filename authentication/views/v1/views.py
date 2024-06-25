@@ -44,7 +44,7 @@ class UserRegistrationAPIView(APIView):
 
 
 class CheckUser(APIView, ApiCustomResponse):
-    def get(self, request):
+    def post(self, request):
         phone_number = request.data.get('phone_number', None)
         if phone_number is None:
             return self.get_response(
