@@ -5,5 +5,5 @@ from .models import CustomUser
 # admin.site.register(CustomUser)
 @admin.register(CustomUser)
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ['username', 'email', 'phone', 'is_staff']
+    list_display = ['name', 'email', 'phone', 'is_staff']
     search_fields = ('email',)

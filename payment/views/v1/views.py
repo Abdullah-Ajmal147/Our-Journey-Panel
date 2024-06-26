@@ -1,10 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from payment.serializers import CardInformationSerializer
-import stripe
 from django.conf import settings
-
+import stripe
+from payment.serializers import CardInformationSerializer
 
 class PaymentAPI(APIView):
     serializer_class = CardInformationSerializer
@@ -15,50 +14,38 @@ class PaymentAPI(APIView):
 
     def stripe_card_payment(self, data_dict):
         try:
-            card_details = {
-                "type": "card",
-                "card": {
+            # Create a PaymentMethod with card details
+            payment_method = stripe.PaymentMethod.create(
+                type="card",
+                card={
                     "number": data_dict['card_number'],
                     "exp_month": data_dict['expiry_month'],
                     "exp_year": data_dict['expiry_year'],
                     "cvc": data_dict['cvc'],
                 },
-            }
-            
+            )
+
             # Create a PaymentIntent
             payment_intent = stripe.PaymentIntent.create(
                 amount=10000,  # This is in the smallest currency unit (e.g., cents)
                 currency='inr',
-                payment_method_types=['card'],
+                payment_method=payment_method.id,
+                confirm=True,
             )
 
-            # Modify the PaymentIntent with card details
-            payment_intent_modified = stripe.PaymentIntent.modify(
-                payment_intent['id'],
-                payment_method=card_details['card'],
-            )
-
-            # Confirm the PaymentIntent
-            payment_confirm = stripe.PaymentIntent.confirm(payment_intent['id'])
-            
-            # Retrieve the PaymentIntent to get its current status
-            payment_intent_modified = stripe.PaymentIntent.retrieve(payment_intent['id'])
-
-            if payment_intent_modified and payment_intent_modified['status'] == 'succeeded':
+            if payment_intent and payment_intent['status'] == 'succeeded':
                 response = {
                     'message': "Card Payment Success",
                     'status': status.HTTP_200_OK,
-                    "card_details": card_details,
-                    "payment_intent": payment_intent_modified,
-                    "payment_confirm": payment_confirm
+                    "card_details": payment_method.card,
+                    "payment_intent": payment_intent
                 }
             else:
                 response = {
                     'message': "Card Payment Failed",
                     'status': status.HTTP_400_BAD_REQUEST,
-                    "card_details": card_details,
-                    "payment_intent": payment_intent_modified,
-                    "payment_confirm": payment_confirm
+                    "card_details": payment_method.card,
+                    "payment_intent": payment_intent
                 }
         except stripe.error.CardError as e:
             # Since it's a decline, stripe.error.CardError will be caught
@@ -67,16 +54,14 @@ class PaymentAPI(APIView):
             response = {
                 'error': err.get('message'),
                 'status': status.HTTP_400_BAD_REQUEST,
-                "payment_intent": {"id": "Null"},
-                "payment_confirm": {'status': "Failed"}
+                "payment_intent": {"id": "Null"}
             }
         except Exception as e:
             # Other errors will be caught here
             response = {
                 'error': str(e),
                 'status': status.HTTP_400_BAD_REQUEST,
-                "payment_intent": {"id": "Null"},
-                "payment_confirm": {'status': "Failed"}
+                "payment_intent": {"id": "Null"}
             }
         
         return response

@@ -26,6 +26,7 @@ def check_payment_method(value):
 
 class CardInformationSerializer(serializers.Serializer):
     # card_number = max_length=150, required=True
+    card_number = serializers.CharField(max_length=16)
     expiry_month = serializers.CharField(
         max_length=150,
         required=True,
