@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'daphne',
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -162,3 +163,32 @@ CHANNEL_LAYERS = {
 # Stripe Keys
 STRIPE_SECRET_KEY = 'sk_test_51PD4CFKMnegld3GudWpfJF5QHCO25GgpAyf43wgt4nW8KBe7mTwaNHCFb2IeOxBsu6oPMyotIJdQHWHjhMFrqvkV00N6cPq7V3'
 STRIPE_PUBLISHABLE_KEY = 'pk_test_51PD4CFKMnegld3GupBxgQmRCHj51JKFVoTrfMmrnHzGTKqHQBXbceTpW0foqgHu9U1tAPr30vMPGkL00e0unFwbo00HscTlKWS'
+
+
+JAZZMIN_SETTINGS = {
+    # title of the window (Will default to current_admin_site.site_title if absent or None)
+    "site_title": "Journey Admin",
+
+    # Title on the login screen (19 chars max) (defaults to current_admin_site.site_header if absent or None)
+    "site_header": "Journey",
+
+    # Title on the brand (19 chars max) (defaults to current_admin_site.site_header if absent or None)
+    "site_brand": ("Administration"),
+
+    # "site_logo": "anda/re_logo.png",
+    # "extra_css": [
+    #     "/static/css/custom_admin.css",  # Path to your custom CSS file
+    # ],
+    # "language_chooser": True,
+    "changeform_format": "vertical_tabs",
+    # Whether to display the side menu
+    "show_sidebar": True,
+
+    # Whether to aut expand the menu
+    # "navigation_expanded": True,
+    "usermenu_links": [
+        {"name": "Printfull Store", "url": "https://www.printful.com/dashboard/default/orders", "new_window": True},
+        # {"model": "auth.user"}
+    ],
+
+}

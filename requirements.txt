@@ -6,6 +6,7 @@ requests==2.32.3
 channels==4.1.0
 channels-redis==4.2.0
 daphne==4.1.2
+django-jazzmin==2.6.0
 
 #Django==5.0.6
 

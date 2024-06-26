@@ -42,3 +42,7 @@ class CardInformationSerializer(serializers.Serializer):
         required=True,
         validators=[check_cvc],
     )
+
+class TokenPaymentSerializer(serializers.Serializer):
+    stripeToken = serializers.CharField(max_length=100)
+    email = serializers.EmailField()
