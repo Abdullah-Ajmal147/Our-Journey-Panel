@@ -3,7 +3,7 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from authentication.models import *
+# from authentication.models import *
 
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
@@ -112,8 +112,8 @@ class RequestCaptainConsumer(WebsocketConsumer):
 
         captain_id = data['captain_id']
 
-        captain_obj = CustomUser.objects.get(id=captain_id)
-        print('captain_obj', captain_obj)
+        # captain_obj = CustomUser.objects.get(id=captain_id)
+        # print('captain_obj', captain_obj)
         
 
         # Send confirmation to the specific user
@@ -137,12 +137,12 @@ class RequestCaptainConsumer(WebsocketConsumer):
             "fare": fare,
             "message": "Order confirmation",
             "captain_id": captain_id,
-            'captain_name':captain_obj.name,
-            'captain_phone': captain_obj.phone,
-            'captain_country_code': captain_obj.country_code,
-            'captain_email': captain_obj.email,
-            'captain_role': captain_obj.role,
-            'captain_ride_category': captain_obj.ride_category,
+            # 'captain_name':captain_obj.name,
+            # 'captain_phone': captain_obj.phone,
+            # 'captain_country_code': captain_obj.country_code,
+            # 'captain_email': captain_obj.email,
+            # 'captain_role': captain_obj.role,
+            # 'captain_ride_category': captain_obj.ride_category,
         }
 
         user_id = user_id
