@@ -43,7 +43,7 @@ def caption_dashboard(request):
 
 
 def user_dashboard(request, room_name):
-    print(room_name)
+    print('room_name',room_name)
     return render(request, "chat/user_dashboard.html", {"room_name": room_name})
 
 

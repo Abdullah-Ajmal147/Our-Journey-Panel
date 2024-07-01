@@ -87,9 +87,9 @@ class RequestCaptainConsumer(WebsocketConsumer):
 
     def receive(self, text_data):
         data = json.loads(text_data)
-        print(data)
+        print('data receive from',data)
         if 'command' in data and data['command'] == 'confirm_order':
-            print(data['captain_id'])
+            print('captain_id' ,data['captain_id'])
             self.confirm_order(data)
 
     def confirm_order(self, data):
@@ -113,7 +113,7 @@ class RequestCaptainConsumer(WebsocketConsumer):
         captain_id = data['captain_id']
 
         captain_obj = CustomUser.objects.get(id=captain_id)
-        print(captain_obj)
+        print('captain_obj', captain_obj)
         
 
         # Send confirmation to the specific user
