@@ -31,9 +31,14 @@ class OrderAPIView(APIView, ApiCustomResponse):
             'to_latitude': str(saved_instance.to_location.latitude),
             'to_longitude': str(saved_instance.to_location.longitude),
             'car_type': saved_instance.ride_type,
-            'price': str(saved_instance.fare),
+            'fare': str(saved_instance.fare),
             'order_id': saved_instance.id,
-            'user_id': saved_instance.user_id
+            'user_id': saved_instance.user_id,
+            'user_name': request.user.name,
+            'phone' : request.user.phone,
+            'country_code': request.user.country_code,
+            'email' : request.user.email,
+            'role': request.user.role
             }
 
             layer = get_channel_layer()

@@ -32,14 +32,31 @@
             const data = JSON.parse(e.data);
             const ordersLog = document.querySelector('#orders-log');
             const orderElement = document.createElement('div');
-            orderElement.textContent = `Order from ${data.order_details.from_address} ${data.order_details.from_latitude}, ${data.order_details.from_longitude} to ${data.order_details.to_address} ${data.order_details.to_latitude}, ${data.order_details.to_longitude}, Car Type: ${data.order_details.car_type}, Price: ${data.order_details.price}, User ID: ${data.order_details.user_id}, Order ID: ${data.order_details.order_id}`;
+            orderElement.textContent = `Order from ${data.order_details.from_address} ${data.order_details.from_latitude}, ${data.order_details.from_longitude} to ${data.order_details.to_address} ${data.order_details.to_latitude}, ${data.order_details.to_longitude}, Car Type: ${data.order_details.car_type}, Price: ${data.order_details.price}, User ID: ${data.order_details.user_id}, Order ID: ${data.order_details.order_id}, User Name: ${data.order_details.user_name}, Phone: ${data.order_details.phone}, Country Code: ${data.order_details.country_code}, Email: ${data.order_details.email}, Role: ${data.order_details.role}`;
             const confirmButton = document.createElement('button');
             confirmButton.textContent = 'Confirm Order';
             confirmButton.onclick = function() {
                 captainSocket.send(JSON.stringify({
                     command: 'confirm_order',
                     order_id: data.order_details.order_id,
-                    user_id: data.order_details.user_id
+                    user_id: data.order_details.user_id,
+
+                    user_name: data.order_details.user_name,
+                    phone: data.order_details.phone,
+                    country_code: data.order_details.country_code,
+                    email: data.order_details.email,
+                    role: data.order_details.role,
+
+                    from_address: data.order_details.from_address,
+                    from_latitude: data.order_details.from_latitude,
+                    from_longitude: data.order_details.from_longitude,
+                    to_address: data.order_details.to_address,
+                    to_latitude: data.order_details.to_latitude,
+                    to_longitude: data.order_details.to_longitude,
+                    care_type: data.order_details.car_type,
+                    fare: data.order_details.fare,
+
+                    captain_id: 1
                 }));
             };
             orderElement.appendChild(confirmButton);

@@ -3,6 +3,7 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from authentication.models import *
 
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
@@ -88,21 +89,63 @@ class RequestCaptainConsumer(WebsocketConsumer):
         data = json.loads(text_data)
         print(data)
         if 'command' in data and data['command'] == 'confirm_order':
-            print(data)
-            self.confirm_order(data['order_id'], data['user_id'])
+            print(data['captain_id'])
+            self.confirm_order(data)
 
-    def confirm_order(self, order_id, user_id):
+    def confirm_order(self, data):
+        # Extract details from data
+        order_id = data['order_id']
+        user_id = data['user_id']
+        user_name = data['user_name']
+        phone = data['phone']
+        country_code = data['country_code']
+        email = data['email']
+        role = data['role']
+        from_address = data['from_address']
+        from_latitude = data['from_latitude']
+        from_longitude = data['from_longitude']
+        to_address = data['to_address']
+        to_latitude = data['to_latitude']
+        to_longitude = data['to_longitude']
+        care_type = data['care_type']
+        fare = data['fare']
+
+        captain_id = data['captain_id']
+
+        captain_obj = CustomUser.objects.get(id=captain_id)
+        print(captain_obj)
+        
+
         # Send confirmation to the specific user
-
         layer = get_channel_layer()
         order_details = {
             "type": "user_message",
             "order_id": order_id,
             "user_id": user_id,
-            "message": "Order confirmation"
+            "user_name": user_name,
+            "phone": phone,
+            "country_code": country_code,
+            "email": email,
+            "role": role,
+            "from_address": from_address,
+            "from_latitude": from_latitude,
+            "from_longitude": from_longitude,
+            "to_address": to_address,
+            "to_latitude": to_latitude,
+            "to_longitude": to_longitude,
+            "care_type": care_type,
+            "fare": fare,
+            "message": "Order confirmation",
+            "captain_id": captain_id,
+            'captain_name':captain_obj.name,
+            'captain_phone': captain_obj.phone,
+            'captain_country_code': captain_obj.country_code,
+            'captain_email': captain_obj.email,
+            'captain_role': captain_obj.role,
+            'captain_ride_category': captain_obj.ride_category,
         }
 
-        user_id = '1'
+        user_id = user_id
         async_to_sync(layer.group_send)(str(user_id), order_details)
 
     def send_ride_order(self, event):

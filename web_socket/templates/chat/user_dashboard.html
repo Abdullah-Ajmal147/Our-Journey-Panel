@@ -23,7 +23,7 @@
     <div id="notification-log"></div>
     <script>
         // Replace 'YOUR_USER_ID' with the actual user's ID dynamically passed from the server or authentication mechanism
-        const userId = '1';
+        const userId = '2';
 
         const userSocket = new WebSocket(
             'ws://' + window.location.host + '/ws/user/' + userId + '/'
@@ -34,7 +34,7 @@
             console.log(data.order_details);
             const log = document.getElementById('notification-log');
             const messageElement = document.createElement('div');
-            messageElement.textContent = `Order Details (Order ID: ${data.order_details.order_id}) (User ID: ${data.order_details.user_id}) (Message: ${data.order_details.message})`;
+            messageElement.textContent = `Order Details (Order ID: ${data.order_details.order_id}) (User ID: ${data.order_details.user_id}) (User Name: ${data.order_details.user_name}) (Phone: ${data.order_details.phone}) (Country Code: ${data.order_details.country_code}) (Email: ${data.order_details.email}) (Role: ${data.order_details.role}) (From Address: ${data.order_details.from_address}) (From Latitude: ${data.order_details.from_latitude}) (From Longitude: ${data.order_details.from_longitude}) (To Address: ${data.order_details.to_address}) (To Latitude: ${data.order_details.to_latitude}) (To Longitude: ${data.order_details.to_longitude}) (Car Type: ${data.order_details.car_type}) (Price: ${data.order_details.price}) (Message: ${data.order_details.message}) (Captain_ID: ${data.order_details.captain_id})`;
             log.appendChild(messageElement);
             log.scrollTop = log.scrollHeight; // Keep the scrollbar at the bottom
         };
