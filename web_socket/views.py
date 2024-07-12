@@ -15,7 +15,7 @@ def index(request):
 def room(request, room_name):
     return render(request, "chat/room.html", {"room_name": room_name})
 
-class SendMessage(APIView):
+class Message(APIView):
     def post(self,request):
         # Get data from request
         dic=request.data
