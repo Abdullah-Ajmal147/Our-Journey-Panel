@@ -10,4 +10,6 @@ websocket_urlpatterns = [
     re_path(r'ws/user/(?P<user_id>\w+)/$', consumers.UserConsumer.as_asgi()),
 
     re_path(r'ws/one-to-one-chat/(?P<user_id>\w+)/(?P<captain_id>\w+)/$', consumers.UserCaptainConsumer.as_asgi()),
+    re_path(r'ws/coordinates/(?P<user_id>\w+)/(?P<captain_id>\w+)/$', consumers.SendCaptainCoordinatesConsumer.as_asgi()),
+
 ]
