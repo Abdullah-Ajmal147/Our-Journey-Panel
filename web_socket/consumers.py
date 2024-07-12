@@ -247,3 +247,47 @@ class UserCaptainConsumer(WebsocketConsumer):
             'user_details': user_details,
             'captain_details': captain_details
         }))
+
+
+class SendCaptainCoordinatesConsumer(WebsocketConsumer):
+    def connect(self):
+        self.user_id = self.scope['url_route']['kwargs']['user_id']
+        self.captain_id = self.scope['url_route']['kwargs']['captain_id']
+
+        self.room_group_name = f'user_{self.user_id}_captain_{self.captain_id}_coordinates'
+
+        # Join room group
+        async_to_sync(self.channel_layer.group_add)(
+            self.room_group_name,
+            self.channel_name
+        )
+
+        self.accept()
+
+    def disconnect(self, close_code):
+        # Leave room group
+        async_to_sync(self.channel_layer.group_discard)(
+            self.room_group_name,
+            self.channel_name
+        )
+
+    def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        coordinates = text_data_json['coordinates']
+
+        # Send coordinates to the group
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {
+                'type': 'coordinates_message',
+                'coordinates': coordinates
+            }
+        )
+
+    def coordinates_message(self, event):
+        coordinates = event['coordinates']
+
+        # Send coordinates to WebSocket
+        self.send(text_data=json.dumps({
+            'coordinates': coordinates
+        }))

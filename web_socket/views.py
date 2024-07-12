@@ -6,6 +6,7 @@ from rest_framework import status
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from authentication.models import *
+from rest_framework.permissions import IsAuthenticated
 
 
 def index(request):
@@ -16,6 +17,7 @@ def room(request, room_name):
     return render(request, "chat/room.html", {"room_name": room_name})
 
 class Message(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self,request):
         # Get data from request
         dic=request.data
@@ -49,6 +51,7 @@ def user_dashboard(request, room_name):
 
 
 class OrderRide(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         order_details = {
             'from': request.data['from'],
@@ -56,7 +59,7 @@ class OrderRide(APIView):
             'car_type': request.data['car_type'],
             'price': request.data['price'],
             'order_id': request.data['order_id'],
-            'user_id': request.data['user_id'],
+            'user_id': request.user.id,
         }
 
         layer = get_channel_layer()
@@ -69,10 +72,11 @@ class OrderRide(APIView):
     
 
 class SendMessage(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request):
 
         message = request.data['message']
-        user_id = request.data['user_id']
+        user_id = request.user.id
         captain_id = request.data['captain_id']
 
         user = CustomUser.objects.get(id=user_id)
@@ -106,3 +110,24 @@ class SendMessage(APIView):
         })
 
         return Response({"message": "Message sent to user and captain"}, status=status.HTTP_200_OK)
+    
+
+class SendCaptionCoordinates(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        user_id = request.data['user_id']
+        captain_id = request.user.id
+        coordinates = {
+            'latitude': request.data['latitude'],
+            'longitude': request.data['longitude']
+        }
+
+        room_group_name = f'user_{user_id}_captain_{captain_id}_coordinates'
+
+        layer = get_channel_layer()
+        async_to_sync(layer.group_send)(room_group_name, {
+            'type': 'coordinates_message',
+            'coordinates': coordinates
+        })
+
+        return Response({"message": "Coordinates sent to user"}, status=status.HTTP_200_OK)

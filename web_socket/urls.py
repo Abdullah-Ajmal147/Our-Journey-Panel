@@ -12,5 +12,6 @@ urlpatterns = [
     path('order_ride/', OrderRide.as_view(), name='order-ride'),
 
     path('send_message/', SendMessage.as_view(), name='send_message'),
+    path('send_coordinates/', SendCaptionCoordinates.as_view(), name='send_coordinates'),
 ]
 
