@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from authentication.models import *
 
 
 def index(request):
@@ -65,3 +66,43 @@ class OrderRide(APIView):
         })
 
         return Response({"message": "Order sent to captains"}, status=status.HTTP_200_OK)
+    
+
+class SendMessage(APIView):
+    def post(self, request):
+
+        message = request.data['message']
+        user_id = request.data['user_id']
+        captain_id = request.data['captain_id']
+
+        user = CustomUser.objects.get(id=user_id)
+        captain = CustomUser.objects.get(id=captain_id)
+
+        user_details = {
+            'name': user.name,
+            'phone': user.phone,
+            'email': user.email,
+            'role': user.role,
+            'ride_category': user.ride_category,
+        }
+
+        captain_details = {
+            'name': captain.name,
+            'phone': captain.phone,
+            'email': captain.email,
+            'role': captain.role,
+            'ride_category': captain.ride_category,
+        }
+
+
+        room_group_name = f'user_{user_id}_captain_{captain_id}'
+
+        layer = get_channel_layer()
+        async_to_sync(layer.group_send)(room_group_name, {
+            'type': 'message',
+            'message': message,
+            'user_details': user_details,
+            'captain_details': captain_details,
+        })
+
+        return Response({"message": "Message sent to user and captain"}, status=status.HTTP_200_OK)
