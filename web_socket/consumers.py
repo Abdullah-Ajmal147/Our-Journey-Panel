@@ -195,3 +195,55 @@ class UserConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps({
             'order_details': event
         }))
+
+
+class UserCaptainConsumer(WebsocketConsumer):
+    def connect(self):
+        self.user_id = self.scope['url_route']['kwargs']['user_id']
+        self.captain_id = self.scope['url_route']['kwargs']['captain_id']
+
+        self.room_group_name = f'user_{self.user_id}_captain_{self.captain_id}'
+
+        # Join room group
+        async_to_sync(self.channel_layer.group_add)(
+            self.room_group_name,
+            self.channel_name
+        )
+
+        self.accept()
+
+    def disconnect(self, close_code):
+        # Leave room group
+        async_to_sync(self.channel_layer.group_discard)(
+            self.room_group_name,
+            self.channel_name
+        )
+
+    def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        message = text_data_json['message']
+        user_details = text_data_json['user_details']
+        captain_details = text_data_json['captain_details']
+
+        # Send message to the group
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {
+                'type': 'message',
+                'message': message,
+                'user_details': user_details,
+                'captain_details': captain_details
+            }
+        )
+
+    def message(self, event):
+        message = event['message']
+        user_details = event['user_details']
+        captain_details = event['captain_details']
+
+        # Send message to WebSocket
+        self.send(text_data=json.dumps({
+            'message': message,
+            'user_details': user_details,
+            'captain_details': captain_details
+        }))
