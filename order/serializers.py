@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from order.models import Location, Orders
+from authentication.serializers import UserRegistrationSerializer
+from order.models import Location, Orders, Review, Support
 
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -41,3 +42,18 @@ class OrderSerializer(serializers.ModelSerializer):
         instance.payment_method = validated_data.get('payment_method', instance.payment_method)
         instance.save()
         return instance
+    
+
+class ReviewSerializer(serializers.ModelSerializer):
+    user = UserRegistrationSerializer()
+    class Meta:
+        model = Review
+        fields = ['id', 'user', 'rating', 'comment', 'created_at']
+        read_only_fields = ['created_at']
+
+
+class SupportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Support
+        fields = ['id', 'user', 'subject', 'description', 'status', 'created_at', 'updated_at']
+        read_only_fields = ['user', 'status', 'created_at', 'updated_at']
