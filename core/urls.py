@@ -25,6 +25,8 @@ urlpatterns = [
     path('chat/', include('web_socket.urls')),
     path('v1/order/', include('order.urls.v1.urls')),
     path('v1/payment/', include('payment.urls.v1.urls')),
+    path('v1/common/', include('common.urls.v1.urls')),
+
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -75,7 +75,7 @@ class ReviewAPIView(APIView, ApiCustomResponse):
         serializer = ReviewSerializer(data=request.data)
         if serializer.is_valid():
             user = get_object_or_404(CustomUser, id=users)
-            serializer.save(user=user)#Wrequest.user)
+            serializer.save(user=user)#request.user)
             return self.get_response(
                 data=serializer.data,
                 status_code=status.HTTP_201_CREATED,
