@@ -7,6 +7,9 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from authentication.models import *
 from rest_framework.permissions import IsAuthenticated
+from .serializers import *
+from .models import Message
+from django.db.models import Q
 
 
 def index(request):
@@ -16,7 +19,7 @@ def index(request):
 def room(request, room_name):
     return render(request, "chat/room.html", {"room_name": room_name})
 
-class Message(APIView):
+class TestMessage(APIView):
     permission_classes = [IsAuthenticated]
     def post(self,request):
         # Get data from request
@@ -71,47 +74,6 @@ class OrderRide(APIView):
         return Response({"message": "Order sent to captains"}, status=status.HTTP_200_OK)
     
 
-class SendMessage(APIView):
-    permission_classes = [IsAuthenticated]
-    def post(self, request):
-
-        message = request.data['message']
-        user_id = request.user.id
-        captain_id = request.data['captain_id']
-
-        user = CustomUser.objects.get(id=user_id)
-        captain = CustomUser.objects.get(id=captain_id)
-
-        user_details = {
-            'name': user.name,
-            'phone': user.phone,
-            'email': user.email,
-            'role': user.role,
-            'ride_category': user.ride_category,
-        }
-
-        captain_details = {
-            'name': captain.name,
-            'phone': captain.phone,
-            'email': captain.email,
-            'role': captain.role,
-            'ride_category': captain.ride_category,
-        }
-
-
-        room_group_name = f'user_{user_id}_captain_{captain_id}'
-
-        layer = get_channel_layer()
-        async_to_sync(layer.group_send)(room_group_name, {
-            'type': 'message',
-            'message': message,
-            'user_details': user_details,
-            'captain_details': captain_details,
-        })
-
-        return Response({"message": "Message sent to user and captain"}, status=status.HTTP_200_OK)
-    
-
 class SendCaptionCoordinates(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request):
@@ -131,3 +93,78 @@ class SendCaptionCoordinates(APIView):
         })
 
         return Response({"message": "Coordinates sent to user"}, status=status.HTTP_200_OK)
+    
+
+
+class MessageView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk=None, format=None):
+        sender_id = request.user.id
+        # sender_id = request.query_params.get('sender')
+        receiver_id = request.query_params.get('receiver')
+        
+        if sender_id and receiver_id:
+            messages = Message.objects.filter(
+                Q(sender=sender_id, receiver=receiver_id) |
+                Q(sender=receiver_id, receiver=sender_id)
+            ).order_by('created_at')
+            serializer = GetMessageSerializer(messages, many=True)
+            return Response({"data": serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "Senser and Receiver id requried"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def post(self, request, format=None):
+        message_text = request.data['message']
+        sender_id = request.user.id
+        receiver_id = request.data['receiver']
+        serializer = MessageSerializer(data={'message_text': message_text, 'sender': sender_id, 'receiver': receiver_id})
+        if serializer.is_valid():
+            serializer.save()
+
+            sender = CustomUser.objects.get(id=sender_id)
+            receiver = CustomUser.objects.get(id=receiver_id)
+
+            sender_details = {
+            'id' : sender.id,
+            'name': sender.name,
+            'phone': sender.phone,
+            'email': sender.email,
+            'role': sender.role,
+            'ride_category': sender.ride_category,
+            }
+
+            receiver_details = {
+                'id' : receiver.id,
+                'name': receiver.name,
+                'phone': receiver.phone,
+                'email': receiver.email,
+                'role': receiver.role,
+                'ride_category': receiver.ride_category,
+            }
+
+            room_group_name = f'sender_{sender_id}_receiver_{receiver_id}'
+
+            layer = get_channel_layer()
+            async_to_sync(layer.group_send)(room_group_name, {
+                'type': 'message',
+                'message': serializer.data,
+                'sender': sender_details,
+                'receiver': receiver_details,
+            })
+        
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # def put(self, request, pk, format=None):
+    #     message = self.get_object(pk)
+    #     serializer = MessageSerializer(message, data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # def delete(self, request, pk, format=None):
+    #     message = self.get_object(pk)
+    #     message.delete()
+    #     return Response(status=status.HTTP_204_NO_CONTENT)
