@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
+import math
 from authentication.models import CustomUser
 
 
@@ -26,7 +26,7 @@ class CoreModel(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name=_("created"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("updated"))
-    is_active = models.BooleanField(default=True, db_index=True)
+    is_active = models.BooleanField(default=True)
 
     # objects = CoreManager()
 
@@ -55,3 +55,19 @@ def get_user_object(pk):
         return CustomUser.objects.get(pk=pk)
     except CustomUser.DoesNotExist:
         raise Http404
+    
+def haversine(lat1, lon1, lat2, lon2):
+    R = 6371.0  # Earth radius in kilometers
+    lat1_rad = math.radians(lat1)
+    lon1_rad = math.radians(lon1)
+    lat2_rad = math.radians(lat2)
+    lon2_rad = math.radians(lon2)
+
+    dlat = lat2_rad - lat1_rad
+    dlon = lon2_rad - lon1_rad
+
+    a = math.sin(dlat / 2)**2 + math.cos(lat1_rad) * math.cos(lat2_rad) * math.sin(dlon / 2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+    distance = R * c
+    return distance

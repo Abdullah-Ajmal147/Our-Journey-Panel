@@ -1,12 +1,5 @@
 from django.contrib import admin
-from .models import Orders, Location, Support
-
-@admin.register(Support)
-class TicketAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'subject', 'status', 'created_at', 'updated_at']
-    list_filter = ['status', 'created_at', 'updated_at']
-    search_fields = ['subject', 'description', 'user__username']
-    ordering = ['-created_at']
+from .models import Orders, Location
 
 class LocationAdmin(admin.ModelAdmin):
     list_display = ('address', 'latitude', 'longitude')

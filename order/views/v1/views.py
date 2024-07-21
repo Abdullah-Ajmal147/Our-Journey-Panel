@@ -1,14 +1,12 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from order.models import Orders, Review, Support
-from order.serializers import OrderSerializer, ReviewSerializer, SupportSerializer
+from order.models import Orders
+from order.serializers import OrderSerializer
 from core.utils import ApiCustomResponse
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-from authentication.models import CustomUser
 
 
 class OrderAPIView(APIView, ApiCustomResponse):
@@ -59,51 +57,12 @@ class OrderAPIView(APIView, ApiCustomResponse):
             status_code=status.HTTP_400_BAD_REQUEST
         )
     
-class ReviewAPIView(APIView, ApiCustomResponse):
+    
+class OrderStatusAPIView(APIView, ApiCustomResponse):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        id = request.GET.get('id')
-        reviews = Review.objects.filter(id = id).filter()
-        serializer = ReviewSerializer(reviews, many=True)
-        return self.get_response(
-            data=serializer.data
-        )
-
-    def post(self, request):
-        users = request.data.get('user', None)
-        serializer = ReviewSerializer(data=request.data)
-        if serializer.is_valid():
-            user = get_object_or_404(CustomUser, id=users)
-            serializer.save(user=user)#request.user)
-            return self.get_response(
-                data=serializer.data,
-                status_code=status.HTTP_201_CREATED,
-            )
-        return self.get_response(
-            message=serializer.errors,
-            status_code=status.HTTP_400_BAD_REQUEST
-        )
-
-class TicketAPIView(APIView, ApiCustomResponse):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        tickets = Support.objects.filter(user=request.user)
-        serializer = SupportSerializer(tickets, many=True)
-        return self.get_response(
-            data=serializer.data
-        )
-
-    def post(self, request):
-        serializer = SupportSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=request.user)
-            return self.get_response(
-                data=serializer.data,
-                status_code=status.HTTP_201_CREATED,
-            )
-        return self.get_response(
-            message=serializer.errors,
-            status_code=status.HTTP_400_BAD_REQUEST
-        )
+        status_list = ['pending', 'confirmed', 'in_progress']
+        rides = Orders.objects.filter(user=request.user, status__in=status_list)
+        serializer = OrderSerializer(rides, many=True)
+        return self.get_response(data=serializer.data)
