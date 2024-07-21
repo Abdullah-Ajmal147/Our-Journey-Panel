@@ -8,6 +8,7 @@ from asgiref.sync import async_to_sync
 from authentication.models import *
 from rest_framework.permissions import IsAuthenticated
 from .serializers import *
+from .models import Message
 from django.db.models import Q
 
 
@@ -18,7 +19,7 @@ def index(request):
 def room(request, room_name):
     return render(request, "chat/room.html", {"room_name": room_name})
 
-class Message(APIView):
+class TestMessage(APIView):
     permission_classes = [IsAuthenticated]
     def post(self,request):
         # Get data from request
@@ -99,7 +100,8 @@ class MessageView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, pk=None, format=None):
-        sender_id = request.query_params.get('sender')
+        sender_id = request.user.id
+        # sender_id = request.query_params.get('sender')
         receiver_id = request.query_params.get('receiver')
         
         if sender_id and receiver_id:
@@ -107,14 +109,14 @@ class MessageView(APIView):
                 Q(sender=sender_id, receiver=receiver_id) |
                 Q(sender=receiver_id, receiver=sender_id)
             ).order_by('created_at')
-            serializer = MessageSerializer(messages, many=True)
+            serializer = GetMessageSerializer(messages, many=True)
             return Response({"data": serializer.data}, status=status.HTTP_200_OK)
         else:
             return Response({"message": "Senser and Receiver id requried"}, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, format=None):
         message_text = request.data['message']
-        sender_id = request.data['sender']
+        sender_id = request.user.id
         receiver_id = request.data['receiver']
         serializer = MessageSerializer(data={'message_text': message_text, 'sender': sender_id, 'receiver': receiver_id})
         if serializer.is_valid():
