@@ -1,5 +1,5 @@
+from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from order.models import Orders
@@ -56,3 +56,13 @@ class OrderAPIView(APIView, ApiCustomResponse):
             message=serializer.errors,
             status_code=status.HTTP_400_BAD_REQUEST
         )
+    
+    
+class OrderStatusAPIView(APIView, ApiCustomResponse):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        status_list = ['pending', 'confirmed', 'in_progress']
+        rides = Orders.objects.filter(user=request.user, status__in=status_list)
+        serializer = OrderSerializer(rides, many=True)
+        return self.get_response(data=serializer.data)

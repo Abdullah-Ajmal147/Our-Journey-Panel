@@ -12,8 +12,6 @@ urlpatterns = [
 
     path('api/test/', ChatCompletionView.as_view(), name='user-register'),
 
-
-
     # path('api/login/', UserLoginAPIView.as_view(), name='api-login'),
     # path('api/signup/', UserSignupAPIView.as_view(), name='api-signup'),
     # path('api/user/', GetUserView.as_view(), name='user-detail'),
