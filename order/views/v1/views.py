@@ -32,7 +32,7 @@ class OrderAPIView(APIView, ApiCustomResponse):
             'to_longitude': str(saved_instance.to_location.longitude),
             'car_type': saved_instance.ride_type,
             'fare': str(saved_instance.fare),
-            'order_id': saved_instance.id,
+            'order_id': saved_instance.uuid,
             'user_id': saved_instance.user_id,
             'user_name': request.user.name,
             'phone' : request.user.phone,
