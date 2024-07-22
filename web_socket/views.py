@@ -110,7 +110,7 @@ class MessageView(APIView):
                 Q(sender=receiver_id, receiver=sender_id)
             ).order_by('created_at')
             serializer = GetMessageSerializer(messages, many=True)
-            return Response({"data": serializer.data}, status=status.HTTP_200_OK)
+            return Response({"data": serializer.data, "status_code": status.HTTP_200_OK}, status=status.HTTP_200_OK)
         else:
             return Response({"message": "Senser and Receiver id requried"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -126,19 +126,21 @@ class MessageView(APIView):
             receiver = CustomUser.objects.get(id=receiver_id)
 
             sender_details = {
-            'id' : sender.id,
-            'name': sender.name,
-            'phone': sender.phone,
-            'email': sender.email,
-            'role': sender.role,
-            'ride_category': sender.ride_category,
+                'id': sender.id,
+                'name': sender.name,
+                'email': sender.email,
+                'phone': sender.phone,
+                'country_code': sender.country_code,
+                'role': sender.role,
+                'ride_category': sender.ride_category,
             }
 
             receiver_details = {
-                'id' : receiver.id,
+                'id': receiver.id,
                 'name': receiver.name,
-                'phone': receiver.phone,
                 'email': receiver.email,
+                'phone': receiver.phone,
+                'country_code': receiver.country_code,
                 'role': receiver.role,
                 'ride_category': receiver.ride_category,
             }
@@ -148,12 +150,24 @@ class MessageView(APIView):
             layer = get_channel_layer()
             async_to_sync(layer.group_send)(room_group_name, {
                 'type': 'message',
-                'message': serializer.data,
+                'id' : serializer.data['id'],
+                'message_text': serializer.data['message_text'],
                 'sender': sender_details,
                 'receiver': receiver_details,
+                'created_at': serializer.data['created_at'],
+                'updated_at': serializer.data['updated_at']
             })
+
+            response_data = {
+                "id": serializer.data['id'],
+                "sender": sender_details,
+                "receiver": receiver_details,
+                "message_text": serializer.data['message_text'],
+                "created_at": serializer.data['created_at'],
+                "updated_at": serializer.data['updated_at']
+            }
         
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response({"data" : response_data, "status_code": status.HTTP_200_OK}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # def put(self, request, pk, format=None):

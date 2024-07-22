@@ -199,7 +199,6 @@ class UserConsumer(WebsocketConsumer):
 
 class UserCaptainConsumer(WebsocketConsumer):
     def connect(self):
-
         self.sender_id = self.scope['url_route']['kwargs']['sender_id']
         self.receiver_id = self.scope['url_route']['kwargs']['receiver_id']
 
@@ -222,33 +221,44 @@ class UserCaptainConsumer(WebsocketConsumer):
 
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        message = text_data_json['message']
+        id = text_data_json['id']
+        message_text = text_data_json['message_text']
         sender = text_data_json['sender']
         receiver = text_data_json['receiver']
+        created_at = text_data_json['created_at']
+        updated_at = text_data_json['updated_at']
 
         # Send message to the group
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {
                 'type': 'message',
-                'message': message,
+                'id': id,
+                'message_text': message_text,
                 'sender': sender,
-                'receiver': receiver
+                'receiver': receiver,
+                'created_at': created_at,
+                'updated_at': updated_at
             }
         )
 
     def message(self, event):
-        message = event['message']
+        id = event['id']
+        message_text = event['message_text']
         sender = event['sender']
         receiver = event['receiver']
+        created_at = event['created_at']
+        updated_at = event['updated_at']
 
         # Send message to WebSocket
         self.send(text_data=json.dumps({
-            'message': message,
+            'id': id,
+            'message_text': message_text,
             'sender': sender,
-            'receiver': receiver
+            'receiver': receiver,
+            'created_at': created_at,
+            'updated_at': updated_at
         }))
-
 
 class SendCaptainCoordinatesConsumer(WebsocketConsumer):
     def connect(self):
