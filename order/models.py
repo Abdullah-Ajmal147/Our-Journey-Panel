@@ -40,7 +40,8 @@ class Orders(CoreModel):
     fare = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     payment_method = models.CharField(max_length=50, choices=PAYMENT_METHOD_CHOICES, default='cash')
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='orders')
-  
+    captain_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True, related_name='captain_orders')
+
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     payment_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
 
