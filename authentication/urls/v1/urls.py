@@ -1,7 +1,7 @@
 from django.urls import path
 from authentication.views.v1.views import (
     UserRegistrationAPIView, 
-    ChatCompletionView,
+    ChatCompletionView, UserfcmTokenAPIView,
     CheckUser, Profile
     )
 
@@ -11,6 +11,7 @@ urlpatterns = [
     path('api/profile/', Profile.as_view(), name='user-profile'),
 
     path('api/test/', ChatCompletionView.as_view(), name='user-register'),
+    path('api/fcm-token/', UserfcmTokenAPIView.as_view(), name='fcm-token'),
 
     # path('api/login/', UserLoginAPIView.as_view(), name='api-login'),
     # path('api/signup/', UserSignupAPIView.as_view(), name='api-signup'),

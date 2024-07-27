@@ -44,9 +44,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     phone = models.CharField(max_length=20, unique=True)
     country_code = models.CharField(max_length=20, blank=True)
     email = models.EmailField(max_length=255, unique=True)
+
     is_active = models.BooleanField(default=True)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES,blank=True)
     ride_category = models.CharField(max_length=20, choices=RIDE_CHOICES,blank=True)
+    fcm_token = models.CharField(max_length=255, blank=True, null=True)
 
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)

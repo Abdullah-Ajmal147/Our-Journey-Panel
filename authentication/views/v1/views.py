@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from authentication.serializers import UserRegistrationSerializer
-from core.utils import ApiCustomResponse
+from core.utils import ApiCustomResponse, get_user_object
 from authentication.models import CustomUser
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -129,3 +129,23 @@ class ChatCompletionView(APIView):
             return Response({"error": str(err)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
         return Response(response_data, status=response.status_code)
+    
+
+class UserfcmTokenAPIView(APIView, ApiCustomResponse):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, *args, **kwargs):
+        fcm_token = request.GET.get('fcm_token', None)
+        user_profile = request.user
+        if fcm_token:
+            user_profile.fcm_token=fcm_token
+            user_profile.save()
+            return self.get_response(
+                message='Token Updated Successfully.',
+                status_code=status.HTTP_200_OK,
+            )
+        else:
+            return self.get_response(
+                message='fcm_token field required.',
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
