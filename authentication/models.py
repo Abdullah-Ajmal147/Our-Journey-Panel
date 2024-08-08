@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.contrib.auth.models import Group, Permission
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+# from order.models import Location
 
 
 class CustomUserManager(BaseUserManager):
@@ -75,8 +76,8 @@ class Schedule(models.Model):
     online_status = models.BooleanField(default=True)
     start_time = models.TimeField()
     end_time = models.TimeField()
-    route_start = models.CharField(max_length=255)
-    route_end = models.CharField(max_length=255)
+    route_start = models.ForeignKey('order.Location', verbose_name=_("Route Start"), on_delete=models.SET_NULL, related_name='schedule_route_start', null=True, blank=True)
+    route_end = models.ForeignKey('order.Location', verbose_name=_("Route End"), on_delete=models.SET_NULL, related_name='schedule_route_end', null=True, blank=True)
 
     class Meta:
         db_table = 'schedule' 
